@@ -34,8 +34,8 @@ namespace RetroAchievementBingoGenerator.Models.Lockout
         public Limits Limits { get; set; }
     }
 
-    public enum BoardCategory { Early, Late, Mid };
 
-    public enum Progression { E, L, M, N };
+
+
 
 }

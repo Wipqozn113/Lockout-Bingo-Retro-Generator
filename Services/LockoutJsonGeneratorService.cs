@@ -3,6 +3,7 @@ using RetroAchievementBingoGenerator.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using RetroAchievementBingoGenerator.Models.Lockout.Enums;
 using System.Text.RegularExpressions;
 
 namespace RetroAchievementBingoGenerator.Services
@@ -45,7 +46,7 @@ namespace RetroAchievementBingoGenerator.Services
                     Tooltip = tooltip,
                     LineCategories = new List<object>(),
                     BoardCategories = new List<BoardCategory>(),
-                    Progression = new List<string>() { "n" },
+                    Progression = new List<Progression>() { Progression.Early },
                     Icons = new List<string>(),
                     Range = new List<long>()
                 };

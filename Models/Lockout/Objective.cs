@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using RetroAchievementBingoGenerator.Models.Lockout.Enums;
 
 namespace RetroAchievementBingoGenerator.Models.Lockout
 {
@@ -31,7 +32,7 @@ namespace RetroAchievementBingoGenerator.Models.Lockout
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("progression")]
-        public List<string> Progression { get; set; }
+        public List<Progression> Progression { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("progressive_ranges")]
