@@ -23,6 +23,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public string GameName { get; set;  }
 
+        public string SearchText => $"{Title} {Description}";
+
         public string DisplayText => $"{Title}: {Description} ({GameName})";
 
         public bool IsChecked { get; set; } = true;

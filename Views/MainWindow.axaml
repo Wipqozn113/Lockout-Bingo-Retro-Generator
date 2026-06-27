@@ -42,7 +42,17 @@
                 </ItemsControl.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="0" Grid.Row="1">Grab Game Systems</Button>
+        <Grid Grid.Column="0" Grid.Row="1" >
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="4" Grid.Column="0">
+                <Label Target="apiKey" Content="API Key" />
+                <TextBox x:Name="apiKey" Text="{Binding ApiKey}" />
+            </StackPanel>
+            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1" >Grab Game Systems</Button>
+        </Grid>
 
         <ScrollViewer VerticalScrollBarVisibility="Visible"
               HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="0">
@@ -57,7 +67,14 @@
                 </ItemsControl.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGamesCommand}" Grid.Column="1" Grid.Row="1">Grab Games</Button>
+        <Grid Grid.Column="1" Grid.Row="1" >
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" Grid.Column="0" />
+            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGamesCommand}" Grid.Column="1">Grab Games</Button>
+        </Grid>
 
         <ScrollViewer VerticalScrollBarVisibility="Visible"
               HorizontalScrollBarVisibility="Disabled" Grid.Column="0" Grid.Row="2">
@@ -72,8 +89,14 @@
                 </ItemsControl.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="0" Grid.Row="3">Grab Achievements</Button>
-
+        <Grid Grid.Column="0" Grid.Row="3" >
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="0" />
+            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="1">Grab Achievements</Button>
+        </Grid>
         <TextBox Height="200" Grid.Column="1" Grid.Row="2" Text="{Binding LockoutJson}" AcceptsReturn="True"></TextBox>
         <StackPanel Grid.Column="1" Grid.Row="3">
            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" >Generate JSON</Button>
