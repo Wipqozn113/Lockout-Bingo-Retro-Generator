@@ -49,7 +49,6 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public LockoutJsonGeneratorService JsonGeneratorService = new LockoutJsonGeneratorService();
 
-        [ObservableProperty]
         private string _lockoutJson = "";
 
         [ObservableProperty]
@@ -151,18 +150,13 @@ namespace RetroAchievementBingoGenerator.ViewModels
         }
 
         [RelayCommand]
-        private void GenerateJson()
+        private async Task GenerateJson()
         {
-            LockoutJson = JsonGeneratorService.GenerateJson(Achievements.Where(x => x.IsChecked).ToList());
-        }
-
-        [RelayCommand]
-        private async Task CopyJsonToClipboard()
-        {
+            _lockoutJson = JsonGeneratorService.GenerateJson(Achievements.Where(x => x.IsChecked).ToList());
             var clipboard = Clipboard.Get();
             if (clipboard != null)
             {
-                await clipboard.SetTextAsync(LockoutJson);
+                await clipboard.SetTextAsync(_lockoutJson);
             }
         }
     }

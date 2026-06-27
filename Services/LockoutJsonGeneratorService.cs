@@ -9,6 +9,8 @@ namespace RetroAchievementBingoGenerator.Services
 {
     public class LockoutJsonGeneratorService
     {
+        private string _validCharactersRegex = "[^-a-zA-Z0-9_ %{}()[\\]!?'\",.+&/:|\\u00C0-\\u00FF\\u0100-\\u017F]+$";
+
         public string GenerateJson(List<AchievementViewModel> achievements)
         {
             var gameName = string.Empty;
@@ -28,12 +30,18 @@ namespace RetroAchievementBingoGenerator.Services
             var objectives = new List<Objective>();
             foreach (var achievement in achievements)
             {
-                var goal = Regex.Replace(achievement.Title, "^[-a-zA-Z0-9_ %{}()[\\]!?'\",.+&/:|\\u00C0-\\u00FF\\u0100-\\u017F]+$", "");
-                var tooltip = Regex.Replace(achievement.Description.Substring(0, 120), "^[-a-zA-Z0-9_ %{}()[\\]!?'\",.+&/:|\\u00C0-\\u00FF\\u0100-\\u017F]+$", "");
+                var goal = Regex.Replace(achievement.Title, _validCharactersRegex, "");
+                goal = isMultiGame ? $"{achievement.GameName}: {goal}" : goal;
+                if(goal.Length > 60)
+                    goal = goal.Substring(0, 60);  
+
+                var tooltip = Regex.Replace(achievement.Description, _validCharactersRegex, "");
+                if (tooltip.Length > 120)
+                    tooltip = tooltip.Substring(0, 120);
+
                 var objective = new Objective
                 {
-                    // String does not match the pattern of "^[-a-zA-Z0-9_ %{}()[\]!?'",.+&/:|\u00C0-\u00FF\u0100-\u017F]+$".
-                    Goal = isMultiGame ? $"{achievement.GameName}: {goal}".Substring(0,60) : goal.Substring(0, 60),
+                    Goal = goal,
                     Tooltip = tooltip,
                     LineCategories = new List<object>(),
                     BoardCategories = new List<BoardCategory>(),

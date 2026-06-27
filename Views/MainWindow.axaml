@@ -20,20 +20,20 @@
        <Grid.RowDefinitions>
            <RowDefinition Height="*"></RowDefinition>
            <RowDefinition Height="*"></RowDefinition>
-           <RowDefinition Height="*"></RowDefinition>
-           <RowDefinition Height="*"></RowDefinition>
        </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-           <ColumnDefinition Width="*"></ColumnDefinition>
-           <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="*"></RowDefinition>
+               <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible"
-              HorizontalScrollBarVisibility="Disabled" Grid.Column="0" Grid.Row="0">
-            <!-- This ItemsControl show all added ToDoItems. -->
-            <!-- It needs to be placed inside a ScrollViewer because other than a ListBox it has not its own -->
-            <ListBox ItemsSource="{Binding GameSystems}" MaxHeight="200">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+               <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <ListBox ItemsSource="{Binding GameSystems}" MaxHeight="200" Grid.Column="0" Grid.Row="0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="vm:GameSystemViewModel">
                         <CheckBox Content="{Binding Name}"
@@ -41,24 +41,20 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ListBox>
-        </ScrollViewer>
-        <Grid Grid.Column="0" Grid.Row="1" >
-            <Grid.ColumnDefinitions>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <StackPanel Spacing="4" Grid.Column="0">
-                <Label Target="apiKey" Content="API Key" />
-                <TextBox x:Name="apiKey" Text="{Binding ApiKey}" />
-            </StackPanel>
-            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1" >Grab Game Systems</Button>
-        </Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible"
-              HorizontalScrollBarVisibility="Disabled" Grid.Column="1" Grid.Row="0">
-            <!-- This ItemsControl show all added ToDoItems. -->
-            <!-- It needs to be placed inside a ScrollViewer because other than a ListBox it has not its own -->
-            <ListBox ItemsSource="{Binding Games}" MaxHeight="200">
+            <Grid Grid.Column="0" Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="4" Grid.Column="0">
+                    <Label Target="apiKey" Content="API Key" />
+                    <TextBox x:Name="apiKey" Text="{Binding ApiKey}" />
+                </StackPanel>
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1" >Grab Game Systems</Button>
+            </Grid>
+
+            <ListBox ItemsSource="{Binding Games}" MaxHeight="200" Grid.Column="1" Grid.Row="0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="vm:GameViewModel">
                         <CheckBox Content="{Binding DisplayText}"
@@ -66,21 +62,24 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ListBox>
-        </ScrollViewer>
-        <Grid Grid.Column="1" Grid.Row="1" >
-            <Grid.ColumnDefinitions>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" Grid.Column="0" />
-            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGamesCommand}" Grid.Column="1">Grab Games</Button>
+  
+            <Grid Grid.Column="1" Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" Grid.Column="0" />
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGamesCommand}" Grid.Column="1">Grab Games</Button>
+            </Grid>
         </Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible"
-              HorizontalScrollBarVisibility="Disabled" Grid.Column="0" Grid.Row="2">
-            <!-- This ItemsControl show all added ToDoItems. -->
-            <!-- It needs to be placed inside a ScrollViewer because other than a ListBox it has not its own -->
-            <ListBox ItemsSource="{Binding Achievements}" MaxHeight="200">
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="*"></RowDefinition>
+               <RowDefinition Height="*"></RowDefinition>
+           </Grid.RowDefinitions>  
+
+            <ListBox ItemsSource="{Binding Achievements}" MaxHeight="200" Grid.Row="0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="vm:AchievementViewModel">
                         <CheckBox Content="{Binding DisplayText}"
@@ -88,20 +87,18 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ListBox>
-        </ScrollViewer>
-        <Grid Grid.Column="0" Grid.Row="3" >
-            <Grid.ColumnDefinitions>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-               <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="0" />
-            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="1">Grab Achievements</Button>
+
+            <Grid Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="0" />
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="1">Grab Achievements</Button>
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" Grid.Column="2">Copy JSON to Clipboard</Button>    
+            </Grid>
         </Grid>
-        <TextBox Height="200" Grid.Column="1" Grid.Row="2" Text="{Binding LockoutJson}" AcceptsReturn="True"></TextBox>
-        <StackPanel Grid.Column="1" Grid.Row="3">
-           <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" >Generate JSON</Button>
-           <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding CopyJsonToClipboardCommand}">Copy JSON to Clipboard</Button>         
-        </StackPanel>
 
     </Grid>
 
