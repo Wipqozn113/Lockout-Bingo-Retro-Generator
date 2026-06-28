@@ -10,7 +10,7 @@ namespace RetroAchievementBingoGenerator.Views
         public MainWindow()
         {
             InitializeComponent();
-        }
+        }  
 
         public async void GenerateJson(object? sender, RoutedEventArgs e)
         {

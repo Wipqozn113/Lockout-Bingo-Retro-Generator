@@ -1,5 +1,4 @@
 ﻿using RetroAchievementBingoGenerator.Models;
-using System;
 
 namespace RetroAchievementBingoGenerator.ViewModels
 {
