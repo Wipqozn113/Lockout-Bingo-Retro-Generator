@@ -32,6 +32,12 @@ namespace RetroAchievementBingoGenerator.ViewModels
         [ObservableProperty]
         private DropDownItemViewModel? _selectedGame;
 
+        [ObservableProperty]
+        private string _goalsRemovedText = string.Empty;
+
+        [ObservableProperty]
+        private bool _isJsonGeneratedDialogVisible = false;
+
         private List<GameViewModel> _allGames = new List<GameViewModel>();
 
         private List<AchievementViewModel> _allAchievements = new List<AchievementViewModel>();
@@ -118,6 +124,12 @@ namespace RetroAchievementBingoGenerator.ViewModels
          ************/
 
         [RelayCommand]
+        private async Task ConfirmJsonDialog()
+        {
+            IsJsonGeneratedDialogVisible = false;
+        }
+
+        [RelayCommand]
         private async Task GetGameSystems()
         {
             var gameSystems = await ApiService.GetGameSystems();
@@ -172,6 +184,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
             {
                 await clipboard.SetTextAsync(lockoutJson);
             }
+            
+            ShowJsonGeneratedDialog();
         }
 
         /*******
@@ -182,6 +196,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
         {
             var games = _allGames.Where(x => x.Title.ToLower().Contains(GameSearchText.ToLower())).ToList();
             Games.Clear();
+
             foreach (var game in games)
             {
                 Games.Add(game);
@@ -198,6 +213,34 @@ namespace RetroAchievementBingoGenerator.ViewModels
             {
                 Achievements.Add(achievement);
             }
+        }
+
+        private void ShowJsonGeneratedDialog()
+        {
+            GoalsRemovedText = string.Empty;
+            if (JsonGeneratorService.GoalsGenerated == 0)
+                GoalsRemovedText += "No goals were generated.";
+            else
+                GoalsRemovedText += $"{JsonGeneratorService.GoalsGenerated} goals were generated.";
+
+            if (JsonGeneratorService.GoalsRemoved == 0 && JsonGeneratorService.GoalsTrimmed == 0 && JsonGeneratorService.ToolTipsTrimmed == 0)
+                GoalsRemovedText += "\n\nNo Goals or Tooltips were removed or trimmed.";
+            else 
+            {
+                if (JsonGeneratorService.GoalsRemoved == 0 && JsonGeneratorService.GoalsTrimmed == 0)
+                    GoalsRemovedText += "\n\nNo goals were removed or trimmed.";
+                else if (JsonGeneratorService.GoalsRemoved > 0)
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsRemoved} goals were removed for being beyond 60 characters.";
+                else if(JsonGeneratorService.GoalsTrimmed > 0)
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsTrimmed} goals were trimmed for being beyond 60 characters.";
+
+                if (JsonGeneratorService.ToolTipsTrimmed == 0)
+                    GoalsRemovedText += "\n\nNo tooltips were trimmed.";
+                else
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.ToolTipsTrimmed} tooltips were trimmed for being beyond 120 characters.";
+            }
+
+            IsJsonGeneratedDialogVisible = true;
         }
 
         /********************************

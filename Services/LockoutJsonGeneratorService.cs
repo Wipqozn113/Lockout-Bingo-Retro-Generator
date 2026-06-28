@@ -14,16 +14,32 @@ namespace RetroAchievementBingoGenerator.Services
 
         public string GenerateJson(List<AchievementViewModel> achievements, bool excludeLongGoals)
         {
-            var lockoutBingoGame = CreateLockoutBingoGame(achievements, excludeLongGoals);
+            GoalsRemoved = 0;
+            GoalsTrimmed = 0;
+            ToolTipsTrimmed = 0;
+            GoalsGenerated = 0;
+            if (achievements != null && achievements.Any())
+            {
+                var lockoutBingoGame = CreateLockoutBingoGame(achievements, excludeLongGoals);
 
-            var json = JsonSerializer.Serialize(
-                lockoutBingoGame,
-                new JsonSerializerOptions() { WriteIndented = true }
-            );
+                var json = JsonSerializer.Serialize(
+                    lockoutBingoGame,
+                    new JsonSerializerOptions() { WriteIndented = true }
+                );
 
-            return json;
-        }       
-    
+                return json;
+            }
+
+            return string.Empty;
+        }
+
+
+        public int GoalsRemoved { get; private set; } = 0;
+        public int GoalsTrimmed { get; private set; } = 0;
+        public int ToolTipsTrimmed { get; private set; } = 0;
+
+        public int GoalsGenerated { get; private set; } = 0;
+
         private LockoutBingoGame CreateLockoutBingoGame(List<AchievementViewModel> achievements, bool excludeLongGoals)
         {
             var games = achievements.Select(x => x.GameName).Distinct().ToList();
@@ -63,6 +79,7 @@ namespace RetroAchievementBingoGenerator.Services
                     objectives.Add(objective);
             }
 
+            GoalsGenerated = objectives.Count;
             return objectives;
         }
 
@@ -102,8 +119,12 @@ namespace RetroAchievementBingoGenerator.Services
             if (goal.Length > 60)
             {
                 if (excludeLongGoals)
+                {
+                    GoalsRemoved++;
                     return string.Empty;
+                }
 
+                GoalsTrimmed++;
                 goal = goal.Substring(0, 60);
             }
 
@@ -114,7 +135,10 @@ namespace RetroAchievementBingoGenerator.Services
         {
             var tooltip = Regex.Replace(achievement.Description, _validCharactersRegex, "");
             if (tooltip.Length > 120)
+            {
+                ToolTipsTrimmed++;
                 tooltip = tooltip.Substring(0, 120);
+            }
 
             return tooltip;
         }
