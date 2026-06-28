@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:RetroAchievementBingoGenerator"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:RetroAchievementBingoGenerator.ViewModels"
+        x:DataType="vm:AdvancedGenerationOptionsDialogViewModel"
+        x:Class="RetroAchievementBingoGenerator.AdvancedGenerationOptionsDialog"
+        Title="AdvancedGenerationOptionsDialog">
+    <StackPanel>
+        <Grid RowSpacing="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions> 
+
+            <Grid Grid.Row="0">
+                <ScrollViewer Height="150"  Grid.Row="0">
+                    <TreeDataGrid  Source="{Binding GamesSource}"/>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <ScrollViewer Height="350">
+                    <TreeDataGrid  Source="{Binding AchievementsSource}"/>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox IsChecked="{Binding OnlyShowTooLong}" Grid.Column="0">Only show goals with text too long for Bingo</CheckBox>
+
+                <StackPanel Spacing="4" Grid.Column="1">
+                    <Label Target="minRetroPoints" Content="Exclude goals with retro points lower than value" />
+                    <NumericUpDown x:Name="minRetroPoints" Value="{Binding MinimumRetroPoints}"  Minimum="1" Maximum="{Binding MaximumRetroPoints}" />
+                </StackPanel>
+
+                <StackPanel Spacing="4" Grid.Column="2">
+                    <Label Target="maxRetroPoints" Content="Exclude goals with retro points higher than value" />
+                    <NumericUpDown x:Name="maxRetroPoints" Value="{Binding MaximumRetroPoints}"  Minimum="{Binding MinimumRetroPoints}" Maximum="{Binding MaxIntValue}" />
+                </StackPanel>
+
+                <Button Content="OK" Command="{Binding ConfirmCommand}" Grid.Column="3" />
+            </Grid>
+        </Grid>
+    </StackPanel>
+</Window>

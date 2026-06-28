@@ -8,6 +8,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
         {
             Id = game.Id;
             Title = game.Title;
+            DisplayName = game.Title;
             ConsoleName = game.ConsoleName;
             ImageIcon = game.ImageIcon;
             NumAchievements = game.NumAchievements;
@@ -22,6 +23,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
         public long Id { get; set; }
 
         public string Title { get; set; }
+
+        public string DisplayName { get; set; }
 
         public string ConsoleName { get; set; }
 
@@ -44,5 +47,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
         public bool IsOfficial { get; set; }
 
         public bool IsChecked { get; set; }
+
+        public bool PrependToGoals { get; set; } = true;
+
     }
 }

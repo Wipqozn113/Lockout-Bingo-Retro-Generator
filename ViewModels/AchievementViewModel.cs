@@ -1,17 +1,21 @@
 ﻿using RetroAchievementBingoGenerator.Models;
+using System;
 
 namespace RetroAchievementBingoGenerator.ViewModels
 {
     public class AchievementViewModel
     {
-        public AchievementViewModel(Game game, Achievement achievement)
+        private GameViewModel _game;
+
+        public AchievementViewModel(GameViewModel game, Achievement achievement)
         {
             Id = achievement.Id;
             Title = achievement.Title;
+            GoalText = achievement.Title;
             Description = achievement.Description;
+            TooltipText = achievement.Description;
             RetroPoints = achievement.TrueRatio;
-            GameId = game.Id;
-            GameName = game.Title;
+            _game = game;
         }
 
         public long Id { get; set; }
@@ -22,15 +26,25 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public int RetroPoints { get; set; }
 
-        public long GameId { get; set; }
+        public long GameId => _game.Id;
 
-        public string GameName { get; set;  }
+        public string GameName => _game.DisplayName;
 
         public int Weight { get; set; } = 100;
 
         public string SearchText => $"{Title} {Description}";
 
         public string DisplayText => $"{Title}: {Description} ({GameName}) ({RetroPoints})";
+
+        public string GoalText { get; set; }
+
+        public string GoalTextWithGameName => $"{GameName}: {GoalText}";
+
+        public string GoalTextLenth => $"{GoalText.Length} ({GoalText.Length + GameName.Length})";
+
+        public string TooltipText { get; set; }
+
+        public int TooltipTextLength => TooltipText.Length; 
 
         public bool IsChecked { get; set; } = true;
 
@@ -41,5 +55,17 @@ namespace RetroAchievementBingoGenerator.ViewModels
         public bool IsLate { get; set; } = false;
 
         public bool IsEndgame { get; set; } = false;
+
+        public bool PrependGameName = true;
+
+        public bool PrependGameNameIfMulti => PrependGameName && _game.PrependToGoals;
+        
+        public int GetGoalTextLength(bool isMultiGame)
+        {
+            if (isMultiGame)
+                return GoalTextWithGameName.Length;
+            else
+                return GoalText.Length;
+        }
     }
 }

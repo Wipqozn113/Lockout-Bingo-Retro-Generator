@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Media;
 using System.Threading.Tasks;
+using System.Reflection.Metadata.Ecma335;
 
 namespace RetroAchievementBingoGenerator.ViewModels
 {
@@ -151,17 +152,18 @@ namespace RetroAchievementBingoGenerator.ViewModels
         private async Task GetAchievements()
         {
             var games = await ApiService.GetGamesExtended(Games.Where(x => x.IsChecked).Select(x => x.Id).ToList());
-            Achievements.Clear();
             GamesDropDown.Clear();
             GamesDropDown.Add(_showAllDropDownItem);
             SelectedGame = _showAllDropDownItem;
+            Achievements.Clear();
             _allAchievements.Clear();
             foreach(var game in games.Where(x => x.IsOfficial))
             {
+                var gamevm = Games.Where(x => x.Id == game.Id).First();
                 GamesDropDown.Add(new DropDownItemViewModel(game));
                 foreach(var achivement in game.Achievements)
                 {
-                    var vm = new AchievementViewModel(game, achivement.Value);
+                    var vm = new AchievementViewModel(gamevm, achivement.Value);
                     _allAchievements.Add(vm);
                     if(vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
                         Achievements.Add(vm);
@@ -169,8 +171,22 @@ namespace RetroAchievementBingoGenerator.ViewModels
             }            
         }
 
-        [RelayCommand]
-        private async Task GenerateJson()
+        /*******
+        * Misc *
+        ********/
+
+        public async Task UpdateAllLists()
+        {
+            GameFilter();
+            AchievementFilter();
+        }
+
+        public bool IsMultiGame()
+        {
+            return GamesDropDown.Count > 2;
+        }
+
+        public async Task<string> GenerateBingoJson()
         {
             var lockoutJson = JsonGeneratorService.GenerateJson(Achievements.ToList(), ExcludeGoalsBeyondCharacterLimit);
             var clipboard = Clipboard.Get();
@@ -178,19 +194,9 @@ namespace RetroAchievementBingoGenerator.ViewModels
             {
                 await clipboard.SetTextAsync(lockoutJson);
             }
-            
-            ShowJsonGeneratedDialog();
-        }
 
-        [RelayCommand]
-        private async Task CloseJsonDialog()
-        {
-            IsJsonGeneratedDialogVisible = false;
+            return GetJsonGeneratedDialogText();
         }
-
-        /*******
-        * Misc *
-        ********/
 
         private void GameFilter()
         {
@@ -206,16 +212,19 @@ namespace RetroAchievementBingoGenerator.ViewModels
         private void AchievementFilter()
         {
             var achivements = _allAchievements.Where(x => x.SearchText.ToLower().Contains(AchievementSearchText.ToLower()));
+
             if (SelectedGame is not null && SelectedGame.Value != -1)
                 achivements = achivements.Where(x => x.GameId == SelectedGame.Value);
+
             Achievements.Clear();
-            foreach (var achievement in achivements)
+            foreach (var achievement in achivements
+                .Where(x => x.RetroPoints >= LockoutJsonGeneratorService.MinimumRetroPoints && x.RetroPoints <= LockoutJsonGeneratorService.MaximumRetroPoints))
             {
                 Achievements.Add(achievement);
             }
         }
 
-        private void ShowJsonGeneratedDialog()
+        public string GetJsonGeneratedDialogText()
         {
             GoalsRemovedText = string.Empty;
             if (JsonGeneratorService.GoalsGenerated == 0)
@@ -225,22 +234,22 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
             if (JsonGeneratorService.GoalsRemoved == 0 && JsonGeneratorService.GoalsTrimmed == 0 && JsonGeneratorService.ToolTipsTrimmed == 0)
                 GoalsRemovedText += "\n\nNo Goals or Tooltips were removed or trimmed.";
-            else 
+            else
             {
                 if (JsonGeneratorService.GoalsRemoved == 0 && JsonGeneratorService.GoalsTrimmed == 0)
                     GoalsRemovedText += "\n\nNo goals were removed or trimmed.";
                 else if (JsonGeneratorService.GoalsRemoved > 0)
-                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsRemoved} goals were removed for being beyond 60 characters.";
-                else if(JsonGeneratorService.GoalsTrimmed > 0)
-                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsTrimmed} goals were trimmed for being beyond 60 characters.";
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsRemoved} goals were removed for being beyond {LockoutJsonGeneratorService.GoalCharacterLimit} characters.";
+                else if (JsonGeneratorService.GoalsTrimmed > 0)
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.GoalsTrimmed} goals were trimmed for being beyond {LockoutJsonGeneratorService.GoalCharacterLimit} characters.";
 
                 if (JsonGeneratorService.ToolTipsTrimmed == 0)
                     GoalsRemovedText += "\n\nNo tooltips were trimmed.";
                 else
-                    GoalsRemovedText += $"\n\n{JsonGeneratorService.ToolTipsTrimmed} tooltips were trimmed for being beyond 120 characters.";
+                    GoalsRemovedText += $"\n\n{JsonGeneratorService.ToolTipsTrimmed} tooltips were trimmed for being beyond {LockoutJsonGeneratorService.TooltipCharacterLimit} characters.";
             }
 
-            IsJsonGeneratedDialogVisible = true;
+            return GoalsRemovedText;
         }
 
         /********************************
@@ -296,17 +305,31 @@ namespace RetroAchievementBingoGenerator.ViewModels
                 Columns =
                 {
                     new CheckBoxColumn<GameViewModel>("Include", x => x.IsChecked, (m, v) => m.IsChecked = v),
-                    new TextColumn<GameViewModel, string>("Name", x => x.Title),
+                    new TextColumn<GameViewModel, string>("Name", x => x.DisplayName),
                     new TextColumn<GameViewModel, string>("Console", x => x.ConsoleName),
                     new TextColumn<GameViewModel, int>("Goals", x => x.NumAchievements, null, numberOptions)
                 }
             };
         }
+
         private FlatTreeDataGridSource<AchievementViewModel> ConstructAchievementsSource()
         {
             var numberOptions = new TextColumnOptions<AchievementViewModel>
             {
-                TextAlignment = TextAlignment.Center
+                TextAlignment = TextAlignment.Center,
+                CanUserResizeColumn = true
+            };
+
+            var shortTextColumnOptions = new TextColumnOptions<AchievementViewModel>
+            {
+                MaxWidth = new GridLength(200),
+                CanUserResizeColumn = true
+            };
+
+            var longTextColumnOptions = new TextColumnOptions<AchievementViewModel>
+            {
+                MaxWidth = new GridLength(400),
+                CanUserResizeColumn = true
             };
 
             return new FlatTreeDataGridSource<AchievementViewModel>(Achievements)
@@ -314,11 +337,10 @@ namespace RetroAchievementBingoGenerator.ViewModels
                 Columns =
                 {
                     new CheckBoxColumn<AchievementViewModel>("Include", x => x.IsChecked, (m, v) => m.IsChecked = v),
-                    new TextColumn<AchievementViewModel, string>("Goal", x => x.Title),
-                    new TextColumn<AchievementViewModel, string>("Tooltip", x => x.Description),
-                    new TextColumn<AchievementViewModel, string>("Game", x => x.GameName),
+                    new TextColumn<AchievementViewModel, string>("Goal", x => x.GoalText, null, shortTextColumnOptions),
+                    new TextColumn<AchievementViewModel, string>("Tooltip", x => x.TooltipText, null, longTextColumnOptions),
+                    new TextColumn<AchievementViewModel, string>("Game", x => x.GameName, null, shortTextColumnOptions),
                     new TextColumn<AchievementViewModel, int>("RetroPoints", x => x.RetroPoints, null, numberOptions),
-                    new TextColumn<AchievementViewModel, int>("Weight", x => x.Weight, (m, v) => m.Weight = v, null, numberOptions),
                     new CheckBoxColumn<AchievementViewModel>("Early", x => x.IsEarly, (m, v) => m.IsEarly = v),
                     new CheckBoxColumn<AchievementViewModel>("Mid", x => x.IsMid, (m, v) => m.IsMid = v),
                     new CheckBoxColumn<AchievementViewModel>("Late", x => x.IsLate, (m, v) => m.IsLate = v),

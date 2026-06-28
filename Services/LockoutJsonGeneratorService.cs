@@ -10,6 +10,14 @@ namespace RetroAchievementBingoGenerator.Services
 {
     public class LockoutJsonGeneratorService
     {
+        public const int GoalCharacterLimit = 60;
+
+        public const int TooltipCharacterLimit = 120;
+
+        public static int MinimumRetroPoints = 1;
+
+        public static int MaximumRetroPoints = int.MaxValue;
+
         private string _validCharactersRegex = "[^-a-zA-Z0-9_ %{}()[\\]!?'\",.+&/:|\\u00C0-\\u00FF\\u0100-\\u017F]+$";
 
         public string GenerateJson(List<AchievementViewModel> achievements, bool excludeLongGoals)
@@ -72,7 +80,9 @@ namespace RetroAchievementBingoGenerator.Services
         {
             var objectives = new List<Objective>();
 
-            foreach (var achievement in achievements)
+            var filteredAchivements = achievements.Where(x => x.RetroPoints >= MinimumRetroPoints && x.RetroPoints <= MaximumRetroPoints);
+
+            foreach (var achievement in filteredAchivements)
             {
                 var objective = CreateObjective(achievement, isMultiGame, excludeLongGoals);
                 if(objective is not null) 
@@ -114,9 +124,9 @@ namespace RetroAchievementBingoGenerator.Services
         private string GetGoal(AchievementViewModel achievement, bool isMultiGame, bool excludeLongGoals)
         {
             var goal = Regex.Replace(achievement.Title, _validCharactersRegex, "");
-            goal = isMultiGame ? $"{achievement.GameName}: {goal}" : goal;
+            goal = isMultiGame && achievement.PrependGameNameIfMulti ? $"{achievement.GameName}: {goal}" : goal;
 
-            if (goal.Length > 60)
+            if (goal.Length > GoalCharacterLimit)
             {
                 if (excludeLongGoals)
                 {
@@ -125,7 +135,7 @@ namespace RetroAchievementBingoGenerator.Services
                 }
 
                 GoalsTrimmed++;
-                goal = goal.Substring(0, 60);
+                goal = goal.Substring(0, GoalCharacterLimit);
             }
 
             return goal;
@@ -134,10 +144,10 @@ namespace RetroAchievementBingoGenerator.Services
         private string GetTooltip(AchievementViewModel achievement)
         {
             var tooltip = Regex.Replace(achievement.Description, _validCharactersRegex, "");
-            if (tooltip.Length > 120)
+            if (tooltip.Length > TooltipCharacterLimit)
             {
                 ToolTipsTrimmed++;
-                tooltip = tooltip.Substring(0, 120);
+                tooltip = tooltip.Substring(0, TooltipCharacterLimit);
             }
 
             return tooltip;

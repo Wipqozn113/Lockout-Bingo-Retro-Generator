@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:RetroAchievementBingoGenerator.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="300" Width="400" Height="200"
+        x:Class="RetroAchievementBingoGenerator.JsonGeneratedDialog"
+        x:DataType="vm:JsonGeneratedDialogViewModel"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False"
+        Title="Json Generated Successfully">
+
+        <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:JsonGeneratedDialogViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto" Margin="20">
+        <TextBlock Grid.Row="0" Text="{Binding Message}"
+                   TextWrapping="Wrap" VerticalAlignment="Center" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Spacing="8">
+            <Button Content="OK" Command="{Binding ConfirmCommand}" />
+        </StackPanel>
+    </Grid>
+
+</Window>
