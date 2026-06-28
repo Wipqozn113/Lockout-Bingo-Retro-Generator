@@ -80,7 +80,7 @@
                     <TextBlock Text="{Binding GoalsRemovedText}" />
                     <StackPanel Orientation="Horizontal" Spacing="8"
                                 HorizontalAlignment="Right">
-                        <Button Content="OK" Command="{Binding ConfirmJsonDialogCommand}" />
+                        <Button Content="OK" Command="{Binding CloseJsonDialogCommand}" />
                     </StackPanel>
                 </StackPanel>
             </Border>

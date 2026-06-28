@@ -124,12 +124,6 @@ namespace RetroAchievementBingoGenerator.ViewModels
          ************/
 
         [RelayCommand]
-        private async Task ConfirmJsonDialog()
-        {
-            IsJsonGeneratedDialogVisible = false;
-        }
-
-        [RelayCommand]
         private async Task GetGameSystems()
         {
             var gameSystems = await ApiService.GetGameSystems();
@@ -186,6 +180,12 @@ namespace RetroAchievementBingoGenerator.ViewModels
             }
             
             ShowJsonGeneratedDialog();
+        }
+
+        [RelayCommand]
+        private async Task CloseJsonDialog()
+        {
+            IsJsonGeneratedDialogVisible = false;
         }
 
         /*******
