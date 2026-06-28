@@ -12,9 +12,9 @@ namespace RetroAchievementBingoGenerator.Services
     {
         private string _validCharactersRegex = "[^-a-zA-Z0-9_ %{}()[\\]!?'\",.+&/:|\\u00C0-\\u00FF\\u0100-\\u017F]+$";
 
-        public string GenerateJson(List<AchievementViewModel> achievements)
+        public string GenerateJson(List<AchievementViewModel> achievements, bool excludeLongGoals)
         {
-            var lockoutBingoGame = CreateLockoutBingoGame(achievements);
+            var lockoutBingoGame = CreateLockoutBingoGame(achievements, excludeLongGoals);
 
             var json = JsonSerializer.Serialize(
                 lockoutBingoGame,
@@ -24,13 +24,13 @@ namespace RetroAchievementBingoGenerator.Services
             return json;
         }       
     
-        private LockoutBingoGame CreateLockoutBingoGame(List<AchievementViewModel> achievements)
+        private LockoutBingoGame CreateLockoutBingoGame(List<AchievementViewModel> achievements, bool excludeLongGoals)
         {
             var games = achievements.Select(x => x.GameName).Distinct().ToList();
             var isMultiGame = games.Count > 1;
             var gameName = isMultiGame ? "Retro Multi-Game" : games[0];
 
-            var objectives = CreateObjectives(achievements, isMultiGame);
+            var objectives = CreateObjectives(achievements, isMultiGame, excludeLongGoals);
 
             var limits = new Limits
             {
@@ -52,22 +52,27 @@ namespace RetroAchievementBingoGenerator.Services
             return lockoutBingoGame;
         }
 
-        private List<Objective> CreateObjectives(List<AchievementViewModel> achievements, bool isMultiGame)
+        private List<Objective> CreateObjectives(List<AchievementViewModel> achievements, bool isMultiGame, bool excludeLongGoals)
         {
             var objectives = new List<Objective>();
 
             foreach (var achievement in achievements)
             {
-                var objective = CreateObjective(achievement, isMultiGame);
-                objectives.Add(objective);
+                var objective = CreateObjective(achievement, isMultiGame, excludeLongGoals);
+                if(objective is not null) 
+                    objectives.Add(objective);
             }
 
             return objectives;
         }
 
-        private Objective CreateObjective(AchievementViewModel achievement, bool isMultiGame)
+        private Objective? CreateObjective(AchievementViewModel achievement, bool isMultiGame, bool excludeLongGoals)
         {
-            var goal = GetGoal(achievement, isMultiGame);
+            var goal = GetGoal(achievement, isMultiGame, excludeLongGoals);
+
+            if (string.IsNullOrWhiteSpace(goal))
+                return null;
+
             var tooltip = GetTooltip(achievement);
             var weight = GetWeight(achievement);
             var progression = GetProgression(achievement);
@@ -89,12 +94,18 @@ namespace RetroAchievementBingoGenerator.Services
             return objective; 
         }
 
-        private string GetGoal(AchievementViewModel achievement, bool isMultiGame)
+        private string GetGoal(AchievementViewModel achievement, bool isMultiGame, bool excludeLongGoals)
         {
             var goal = Regex.Replace(achievement.Title, _validCharactersRegex, "");
             goal = isMultiGame ? $"{achievement.GameName}: {goal}" : goal;
+
             if (goal.Length > 60)
+            {
+                if (excludeLongGoals)
+                    return string.Empty;
+
                 goal = goal.Substring(0, 60);
+            }
 
             return goal;
         }

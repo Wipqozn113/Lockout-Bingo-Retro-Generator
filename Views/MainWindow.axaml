@@ -16,7 +16,7 @@
     </Design.DataContext>
 
 <StackPanel>
-    <Grid>
+    <Grid RowSpacing="30">
        <Grid.RowDefinitions>
            <RowDefinition Height="*"></RowDefinition>
            <RowDefinition Height="*"></RowDefinition>
@@ -33,14 +33,9 @@
                <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <ListBox ItemsSource="{Binding GameSystems}" MaxHeight="200" Grid.Column="0" Grid.Row="0">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="vm:GameSystemViewModel">
-                        <CheckBox Content="{Binding Name}"
-                            IsChecked="{Binding IsChecked}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ListBox>
+            <ScrollViewer Height="200" Grid.Row="0" Grid.Column="0">
+                <TreeDataGrid  Source="{Binding GameSystemsSource}" />
+            </ScrollViewer>
 
             <Grid Grid.Column="0" Grid.Row="1" >
                 <Grid.ColumnDefinitions>
@@ -54,21 +49,19 @@
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1">Grab Game Systems</Button>
             </Grid>
 
-            <ListBox ItemsSource="{Binding Games}" MaxHeight="200" Grid.Column="1" Grid.Row="0">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="vm:GameViewModel">
-                        <CheckBox Content="{Binding DisplayText}"
-                            IsChecked="{Binding IsChecked}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ListBox>
+            <ScrollViewer Height="200" Grid.Row="0" Grid.Column="1">
+                <TreeDataGrid  Source="{Binding GamesSource}" />
+            </ScrollViewer>
   
             <Grid Grid.Column="1" Grid.Row="1" >
                 <Grid.ColumnDefinitions>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" Grid.Column="0" />
+                <StackPanel Spacing="4" Grid.Column="0">
+                    <Label Target="gameSearch" Content="Filter by Name" />
+                    <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" />
+                </StackPanel>
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGamesCommand}" Grid.Column="1">Grab Games</Button>
             </Grid>
         </Grid>
@@ -79,8 +72,8 @@
                <RowDefinition Height="*"></RowDefinition>
            </Grid.RowDefinitions> 
 
-            <ScrollViewer MaxHeight="300">
-                <TreeDataGrid  Source="{Binding AchievementsSource}" Grid.Row="0"/>
+            <ScrollViewer Height="350"  Grid.Row="0">
+                <TreeDataGrid  Source="{Binding AchievementsSource}"/>
             </ScrollViewer>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -88,19 +81,24 @@
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <ComboBox ItemsSource="{Binding CheckedGames}"
+                <ComboBox ItemsSource="{Binding GamesDropDown}"
                           SelectedItem="{Binding SelectedGame}"
                           Grid.Column="0">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Title}" />
+                        <DataTemplate>                            
+                            <TextBlock Text="{Binding Text}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="1" />
+                <StackPanel Spacing="4" Grid.Column="1">
+                    <Label Target="achievementSearch" Content="Filter by Goal &amp; Tooltip" />
+                    <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}"/>
+                </StackPanel>
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="2">Grab Achievements</Button>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" Grid.Column="3">Copy JSON to Clipboard</Button>    
+                <CheckBox IsChecked="{Binding ExcludeGoalsBeyondCharacterLimit}" Grid.Column="3">Exclude goals longer than 60 characters</CheckBox>
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" Grid.Column="4">Copy JSON to Clipboard</Button>    
             </Grid>
         </Grid>
 
