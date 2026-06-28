@@ -124,7 +124,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
          ************/
 
         [RelayCommand]
-        private async Task GetGameSystems()
+        public async Task GetGameSystems()
         {
             var gameSystems = await ApiService.GetGameSystems();
             var gameSystemViewModels = gameSystems.Where(x => x.IsGameSystem && x.Active).Select(x => new GameSystemViewModel(x)).ToList();

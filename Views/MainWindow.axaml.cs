@@ -41,5 +41,17 @@ namespace RetroAchievementBingoGenerator.Views
             await dialog.ShowDialog<bool?>(this);
             await mainvm.UpdateAllLists();
         }
+
+        protected override async void OnLoaded(RoutedEventArgs e)
+        {
+            base.OnLoaded(e);
+
+            var mainvm = DataContext as MainWindowViewModel;
+
+            if (mainvm is null)
+                throw new InvalidOperationException("View Model not found");
+
+            await mainvm.GetGameSystems();
+        }
     }
 }
