@@ -5,13 +5,13 @@ namespace RetroAchievementBingoGenerator.Models.Lockout.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Progression 
     {
-        [JsonStringEnumMemberName("E")]
+        [JsonStringEnumMemberName("e")]
         Early,
-        [JsonStringEnumMemberName("M")]
+        [JsonStringEnumMemberName("m")]
         Mid,
-        [JsonStringEnumMemberName("L")]
+        [JsonStringEnumMemberName("l")]
         Late,
-        [JsonStringEnumMemberName("N")]
+        [JsonStringEnumMemberName("n")]
         Endgame
     }
 }

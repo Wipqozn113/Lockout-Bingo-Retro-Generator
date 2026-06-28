@@ -51,7 +51,7 @@
                     <Label Target="apiKey" Content="API Key" />
                     <TextBox x:Name="apiKey" Text="{Binding ApiKey}" />
                 </StackPanel>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1" >Grab Game Systems</Button>
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1">Grab Game Systems</Button>
             </Grid>
 
             <ListBox ItemsSource="{Binding Games}" MaxHeight="200" Grid.Column="1" Grid.Row="0">
@@ -77,26 +77,30 @@
             <Grid.RowDefinitions>
                <RowDefinition Height="*"></RowDefinition>
                <RowDefinition Height="*"></RowDefinition>
-           </Grid.RowDefinitions>  
+           </Grid.RowDefinitions> 
 
-            <ListBox ItemsSource="{Binding Achievements}" MaxHeight="200" Grid.Row="0">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="vm:AchievementViewModel">
-                        <CheckBox Content="{Binding DisplayText}"
-                            IsChecked="{Binding IsChecked}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ListBox>
-
-            <Grid Grid.Row="1" >
+            <ScrollViewer MaxHeight="300">
+                <TreeDataGrid  Source="{Binding AchievementsSource}" Grid.Row="0"/>
+            </ScrollViewer>
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
+                   <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="0" />
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="1">Grab Achievements</Button>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" Grid.Column="2">Copy JSON to Clipboard</Button>    
+                <ComboBox ItemsSource="{Binding CheckedGames}"
+                          SelectedItem="{Binding SelectedGame}"
+                          Grid.Column="0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" Grid.Column="1" />
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="2">Grab Achievements</Button>
+                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GenerateJsonCommand}" Grid.Column="3">Copy JSON to Clipboard</Button>    
             </Grid>
         </Grid>
 

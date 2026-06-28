@@ -41,5 +41,12 @@ namespace RetroAchievementBingoGenerator.Models.Lockout
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("tag")]
         public string Tag { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("weighting")]
+        public int Weighting { get; set; }
+
+        [JsonPropertyName("disabled")]
+        public bool Disabled { get; set; }
     }
 }

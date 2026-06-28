@@ -1,15 +1,16 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Input.Platform;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RetroAchievementBingoGenerator.Helpers;
-using RetroAchievementBingoGenerator.Models;
 using RetroAchievementBingoGenerator.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace RetroAchievementBingoGenerator.ViewModels
@@ -18,11 +19,12 @@ namespace RetroAchievementBingoGenerator.ViewModels
     {
         public MainWindowViewModel()
         {
+            ApiKey = string.Empty;
             var apiKey = Environment.GetEnvironmentVariable("RETRO_BINGO_API_KEY");
             if (!string.IsNullOrWhiteSpace(apiKey))
             {
-                _apiKey = apiKey;
-                ApiService = new RetroAchievementsApiService(_apiKey);
+                ApiKey = apiKey;
+                ApiService = new RetroAchievementsApiService(ApiKey);
             }
 
             _debounceGameTextTimer = new DispatcherTimer
@@ -37,13 +39,34 @@ namespace RetroAchievementBingoGenerator.ViewModels
             };
             _debounceAchievementTextTimer.Tick += OnAchievementTextTimerTick;
 
+            AchievementsSource = new FlatTreeDataGridSource<AchievementViewModel>(Achievements)
+            {
+                Columns =
+                {
+                    new CheckBoxColumn<AchievementViewModel>("Include", x => x.IsChecked, (m, v) => m.IsChecked = v),
+                    new TextColumn<AchievementViewModel, string>("Goal", x => x.Title),
+                    new TextColumn<AchievementViewModel, string>("Tooltip", x => x.Description),
+                    new TextColumn<AchievementViewModel, string>("Game", x => x.GameName),
+                    new TextColumn<AchievementViewModel, int>("RetroPoints", x => x.RetroPoints),
+                    new TextColumn<AchievementViewModel, int>("Weight", x => x.Weight, (m, v) => m.Weight = v),
+                    new CheckBoxColumn<AchievementViewModel>("Early", x => x.IsEarly, (m, v) => m.IsEarly = v),
+                    new CheckBoxColumn<AchievementViewModel>("Mid", x => x.IsMid, (m, v) => m.IsMid = v),
+                    new CheckBoxColumn<AchievementViewModel>("Late", x => x.IsLate, (m, v) => m.IsLate = v),
+                    new CheckBoxColumn<AchievementViewModel>("Endgame", x => x.IsEndgame, (m, v) => m.IsEndgame = v)
+                }
+            };
+
         }
 
         public ObservableCollection<GameSystemViewModel> GameSystems { get; } = new ObservableCollection<GameSystemViewModel>();
 
         public ObservableCollection<GameViewModel> Games { get; } = new ObservableCollection<GameViewModel>();
 
+        public ObservableCollection<GameViewModel> CheckedGames { get; } = new ObservableCollection<GameViewModel>();
+
         public ObservableCollection<AchievementViewModel> Achievements { get; } = new ObservableCollection<AchievementViewModel>();
+
+        public FlatTreeDataGridSource<AchievementViewModel> AchievementsSource { get; }
 
         public RetroAchievementsApiService ApiService = new RetroAchievementsApiService();
 
@@ -60,6 +83,9 @@ namespace RetroAchievementBingoGenerator.ViewModels
         [ObservableProperty]
         private string _achievementSearchText = "";
 
+        [ObservableProperty]
+        private GameViewModel? _selectedGame;
+
         private List<GameViewModel> _allGames = new List<GameViewModel>();
 
         private List<AchievementViewModel> _allAchievements = new List<AchievementViewModel>();
@@ -67,6 +93,11 @@ namespace RetroAchievementBingoGenerator.ViewModels
         private readonly DispatcherTimer _debounceGameTextTimer;
 
         private readonly DispatcherTimer _debounceAchievementTextTimer;
+
+        partial void OnSelectedGameChanged(GameViewModel? value)
+        {
+            AchievementFilter();
+        }
 
         partial void OnApiKeyChanged(string value)
         {
@@ -77,7 +108,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
         {
             _debounceGameTextTimer.Stop();
             _debounceGameTextTimer.Start();
-        }
+        }        
 
         private async void OnGameTextTimerTick(object? sender, EventArgs e)
         {
@@ -99,7 +130,14 @@ namespace RetroAchievementBingoGenerator.ViewModels
         private async void OnAchievementTextTimerTick(object? sender, EventArgs e)
         {
             _debounceAchievementTextTimer.Stop(); // Stop so it doesn't loop
+            AchievementFilter();
+        }
+
+        private void AchievementFilter()
+        {
             var achivements = _allAchievements.Where(x => x.SearchText.ToLower().Contains(AchievementSearchText.ToLower()));
+            if (SelectedGame is not null)
+                achivements = achivements.Where(x => x.GameId == SelectedGame.Id);
             Achievements.Clear();
             foreach (var achievement in achivements)
             {
@@ -136,9 +174,11 @@ namespace RetroAchievementBingoGenerator.ViewModels
         {
             var games = await ApiService.GetGamesExtended(Games.Where(x => x.IsChecked).Select(x => x.Id).ToList());
             Achievements.Clear();
+            CheckedGames.Clear();
             _allAchievements.Clear();
             foreach(var game in games.Where(x => x.IsOfficial))
             {
+                CheckedGames.Add(new GameViewModel(game));
                 foreach(var achivement in game.Achievements)
                 {
                     var vm = new AchievementViewModel(game, achivement.Value);
@@ -146,13 +186,13 @@ namespace RetroAchievementBingoGenerator.ViewModels
                     if(vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
                         Achievements.Add(vm);
                 }
-            }
+            }            
         }
 
         [RelayCommand]
         private async Task GenerateJson()
         {
-            _lockoutJson = JsonGeneratorService.GenerateJson(Achievements.Where(x => x.IsChecked).ToList());
+            _lockoutJson = JsonGeneratorService.GenerateJson(Achievements.ToList());
             var clipboard = Clipboard.Get();
             if (clipboard != null)
             {

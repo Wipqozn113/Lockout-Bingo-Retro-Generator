@@ -9,6 +9,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
             Id = achievement.Id;
             Title = achievement.Title;
             Description = achievement.Description;
+            RetroPoints = achievement.TrueRatio;
             GameId = game.Id;
             GameName = game.Title;
         }
@@ -19,14 +20,26 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public string Description { get; set; }
 
+        public int RetroPoints { get; set; }
+
         public long GameId { get; set; }
 
         public string GameName { get; set;  }
 
+        public int Weight { get; set; } = 100;
+
         public string SearchText => $"{Title} {Description}";
 
-        public string DisplayText => $"{Title}: {Description} ({GameName})";
+        public string DisplayText => $"{Title}: {Description} ({GameName}) ({RetroPoints})";
 
         public bool IsChecked { get; set; } = true;
+
+        public bool IsEarly { get; set; } = false;
+
+        public bool IsMid { get; set;  } = false;
+
+        public bool IsLate { get; set; } = false;
+
+        public bool IsEndgame { get; set; } = false;
     }
 }
