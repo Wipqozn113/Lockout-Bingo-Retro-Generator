@@ -45,4 +45,6 @@ There are also a few additional options available for achivements:
 
 Finally, "RetroPoints" under Achievements is a value from Retro Achievements to represent how difficult that achievement is to earn. A higher number means a harder  achievement. Retro Achievements calculates using an algorithim which considers the base "Points" an achievement rewards versus how many people have earned that achievement. I included this to give you some idea how hard an achievement is. I may add in a button later that'll automatically assign progresion zones based on the "RetroPoints".
 
-   
+## Tech Notes
+
+The built-in TreeDataGrid is now a paid feature, so this app uses a community fork: https://github.com/fidarit/TreeDataGrid.Avalonia
