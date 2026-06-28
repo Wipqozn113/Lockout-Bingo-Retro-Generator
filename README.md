@@ -2,6 +2,10 @@
 
 Prototype for a desktop app which generates a JSON file for [Lockout Bingo](https://lockout.live/) using games from the [Retro Achievements API](https://api-docs.retroachievements.org/). Built using Avalonia UI.
 
+## Video Demo
+
+[Video Demo Here](https://youtu.be/rx_dcnlgaWk) 
+
 ## Running
 
 You need to run `RetroAchievementBingoGenerator.exe` inside the `Binaries` folder. You may need .NET installed. I only pushed up the Windows 64-bit files, so it won't run on any other OS. 
