@@ -4,7 +4,7 @@ Prototype for a desktop app which generates a JSON file for [Lockout Bingo](http
 
 ## Video Demo
 
-[Video Demo Here](https://youtu.be/rx_dcnlgaWk) 
+[Video Demo Here](https://youtu.be/8Uho7FohqQ8) 
 
 ## Running
 
