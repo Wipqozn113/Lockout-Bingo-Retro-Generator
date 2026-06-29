@@ -1,7 +1,10 @@
-﻿namespace RetroAchievementBingoGenerator.Models
+﻿using System.Text.Json.Serialization;
+
+namespace RetroAchievementBingoGenerator.Models
 {
     public class Achievement
     {
+        [JsonPropertyName("ID")]
         public long Id { get; set; }
 
         public string Title { get; set; }

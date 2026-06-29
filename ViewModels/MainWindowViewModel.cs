@@ -162,18 +162,27 @@ namespace RetroAchievementBingoGenerator.ViewModels
             GamesDropDown.Add(_showAllDropDownItem);
             SelectedGame = _showAllDropDownItem;
             Achievements.Clear();
-            var existingGames = _allAchievements.Select(x => x.GameId).Distinct();
 
-            foreach(var game in games.Where(x => x.IsOfficial))
+            _allAchievements = _allAchievements.Where(x => games.Any(y => y.Id == x.GameId)).ToList();
+            var existingAchivementIds = _allAchievements.Select(x => x.Id);
+
+            foreach (var game in games.Where(x => x.IsOfficial))
             {
                 var gamevm = Games.Where(x => x.Id == game.Id).First();
                 GamesDropDown.Add(new DropDownItemViewModel(game));
                 foreach(var achivement in game.Achievements.Values)
                 {
-                    var vm = new AchievementViewModel(gamevm, achivement);
-                    _allAchievements.Add(vm);
-                    if (vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
-                        Achievements.Add(vm);
+                    if (existingAchivementIds.Contains(achivement.Id))
+                    {
+                        Achievements.Add(_allAchievements.First(x => x.Id == achivement.Id));
+                    }
+                    else
+                    {
+                        var vm = new AchievementViewModel(gamevm, achivement);
+                        _allAchievements.Add(vm);
+                        if (vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
+                            Achievements.Add(vm);
+                    }
                 }
             }            
         }
