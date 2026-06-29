@@ -126,6 +126,10 @@ namespace RetroAchievementBingoGenerator.ViewModels
         [RelayCommand]
         public async Task GetGameSystems()
         {
+            // No point refreshing something that goes years without changing
+            if (GameSystems.Count > 0)
+                return;
+
             var gameSystems = await ApiService.GetGameSystems();
             var gameSystemViewModels = gameSystems.Where(x => x.IsGameSystem && x.Active).Select(x => new GameSystemViewModel(x)).ToList();
             GameSystems.Clear();
@@ -137,10 +141,13 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         [RelayCommand]
         private async Task GetGames()
-        {
+        {       
             var games = await ApiService.GetGames(GameSystems.Where(x => x.IsChecked).Select(x => x.Id).ToList());
-            _allGames = games.Select(x => new GameViewModel(x)).Where(x => x.IsOfficial).ToList();
+            _allGames = _allGames.Where(x => games.Any(y => y.Id == x.Id)).ToList();
+            var existingGames = _allGames.Select(x => x.Id);
+            _allGames.AddRange(games.Where(x => x.IsOfficial && !existingGames.Contains(x.Id)).Select(x => new GameViewModel(x)));      
             Games.Clear();
+
             foreach(var vm in _allGames.Where(x => x.Title.ToLower().Contains(GameSearchText.ToLower())))
             {
                 Games.Add(vm);
@@ -155,16 +162,17 @@ namespace RetroAchievementBingoGenerator.ViewModels
             GamesDropDown.Add(_showAllDropDownItem);
             SelectedGame = _showAllDropDownItem;
             Achievements.Clear();
-            _allAchievements.Clear();
+            var existingGames = _allAchievements.Select(x => x.GameId).Distinct();
+
             foreach(var game in games.Where(x => x.IsOfficial))
             {
                 var gamevm = Games.Where(x => x.Id == game.Id).First();
                 GamesDropDown.Add(new DropDownItemViewModel(game));
-                foreach(var achivement in game.Achievements)
+                foreach(var achivement in game.Achievements.Values)
                 {
-                    var vm = new AchievementViewModel(gamevm, achivement.Value);
+                    var vm = new AchievementViewModel(gamevm, achivement);
                     _allAchievements.Add(vm);
-                    if(vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
+                    if (vm.SearchText.ToLower().Contains(AchievementSearchText.ToLower()))
                         Achievements.Add(vm);
                 }
             }            

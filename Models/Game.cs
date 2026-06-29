@@ -27,6 +27,8 @@ namespace RetroAchievementBingoGenerator.Models
 
         public bool IsTestKit => Title.StartsWith("~Test Kit~");
 
-        public bool IsOfficial => !IsHack && !IsPrototype && !IsHomebrew && !IsUnlicensed && !IsTestKit;
+        public bool IsDemo => Title.StartsWith("~Demo~");
+
+        public bool IsOfficial => !IsHack && !IsPrototype && !IsHomebrew && !IsUnlicensed && !IsTestKit && !IsDemo;
     }
 }

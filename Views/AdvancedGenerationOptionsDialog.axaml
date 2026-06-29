@@ -36,19 +36,26 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox IsChecked="{Binding OnlyShowTooLong}" Grid.Column="0">Only show goals with text too long for Bingo</CheckBox>
+                <CheckBox IsChecked="{Binding OnlyShowTooLong}" 
+                          Grid.Column="0" VerticalAlignment="Bottom" 
+                          ToolTip.Tip="Will hide goals with text under the bingo character limit (60 for the goal, and 120 for its tooltip)">
+                    Hide Goals Under Limit</CheckBox>
 
-                <StackPanel Spacing="4" Grid.Column="1">
-                    <Label Target="minRetroPoints" Content="Exclude goals with retro points lower than value" />
-                    <NumericUpDown x:Name="minRetroPoints" Value="{Binding MinimumRetroPoints}"  Minimum="1" Maximum="{Binding MaximumRetroPoints}" />
+                <StackPanel Width="180" Spacing="4" Grid.Column="1" ToolTip.Tip="Goals worth less Retro Points than this value will be excluded" Margin="5,0">
+                    <Label Target="minRetroPoints" Content="Min Retro Points" />
+                    <NumericUpDown x:Name="minRetroPoints" ShowButtonSpinner="False"
+                                   Value="{Binding MinimumRetroPoints}"  
+                                   Minimum="1" Maximum="{Binding MaximumRetroPoints}" />
                 </StackPanel>
 
-                <StackPanel Spacing="4" Grid.Column="2">
-                    <Label Target="maxRetroPoints" Content="Exclude goals with retro points higher than value" />
-                    <NumericUpDown x:Name="maxRetroPoints" Value="{Binding MaximumRetroPoints}"  Minimum="{Binding MinimumRetroPoints}" Maximum="{Binding MaxIntValue}" />
+                <StackPanel Width="180" Spacing="4" Grid.Column="2" ToolTip.Tip="Goals worth more Retro Points than this value will be excluded" Margin="5,0">
+                    <Label Target="maxRetroPoints" Content="Max Retro Points" />
+                    <NumericUpDown x:Name="maxRetroPoints" ShowButtonSpinner="False"
+                                   Value="{Binding MaximumRetroPoints}"  
+                                   Minimum="{Binding MinimumRetroPoints}" Maximum="{Binding MaxIntValue}" />
                 </StackPanel>
 
-                <Button Content="OK" Command="{Binding ConfirmCommand}" Grid.Column="3" />
+                <Button Content="OK" VerticalAlignment="Bottom" Command="{Binding ConfirmCommand}" Grid.Column="3" Margin="5,0" />
             </Grid>
         </Grid>
     </StackPanel>

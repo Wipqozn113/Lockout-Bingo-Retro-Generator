@@ -16,6 +16,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
             IsPrototype = game.IsPrototype;
             IsHomebrew = game.IsHomebrew;
             IsUnlicensed = game.IsUnlicensed;
+            IsDemo = game.IsDemo;
             IsTestKit = game.IsTestKit;
             IsOfficial = game.IsOfficial;
         }
@@ -43,6 +44,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
         public bool IsUnlicensed { get; set; }
 
         public bool IsTestKit { get; set; }
+
+        public bool IsDemo { get; set; }
         
         public bool IsOfficial { get; set; }
 

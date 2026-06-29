@@ -42,11 +42,15 @@
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <StackPanel Spacing="4" Grid.Column="0">
+                <StackPanel Spacing="4" Grid.Column="0"
+                            ToolTip.Tip="API Key for the RetroAchivements API. This will autopopulate if you set the environment variable RETRO_BINGO_API_KEY. See README for more details.">
                     <Label Target="apiKey" Content="API Key" />
                     <TextBox x:Name="apiKey" Text="{Binding ApiKey}" PasswordChar="*" />
                 </StackPanel>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetGameSystemsCommand}" Grid.Column="1">Grab Game Systems</Button>
+                <Button VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center" 
+                        Command="{Binding GetGameSystemsCommand}" 
+                        Grid.Column="1">Grab Game Systems</Button>
             </Grid>
 
             <ScrollViewer Height="200" Grid.Row="0" Grid.Column="1">
@@ -58,7 +62,8 @@
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <StackPanel Spacing="4" Grid.Column="0">
+                <StackPanel Spacing="4" Grid.Column="0" 
+                            ToolTip.Tip="Filters games by name. Checked-off games will still be included in generation even if they're hidden.">
                     <Label Target="gameSearch" Content="Filter by Name" />
                     <TextBox x:Name="gameSearch" Text="{Binding GameSearchText}" />
                 </StackPanel>
@@ -84,22 +89,35 @@
                    <ColumnDefinition Width="*"></ColumnDefinition>
                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <ComboBox ItemsSource="{Binding GamesDropDown}"
-                          SelectedItem="{Binding SelectedGame}"
-                          Grid.Column="0">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>                            
-                            <TextBlock Text="{Binding Text}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <StackPanel Spacing="4" Grid.Column="1">
-                    <Label Target="achievementSearch" Content="Filter by Goal &amp; Tooltip" />
-                    <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}"/>
+
+                <StackPanel Spacing="4" Grid.Column="0" ToolTip.Tip="Filters achievements by game. Checked-off achievements will still be included in generation even if they're hidden.">
+                    <Label Target="gameDropDown" Content="Filter by Game" />
+                    <ComboBox ItemsSource="{Binding GamesDropDown}"
+                              SelectedItem="{Binding SelectedGame}"
+                              x:Name="gameDropDown">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>                            
+                                <TextBlock Text="{Binding Text}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </StackPanel>
+
+                <StackPanel Spacing="4" Grid.Column="1" 
+                            ToolTip.Tip="Filters achievements by goal and tooltip. Checked-off achievements will still be included in generation even if they're hidden.">
+                    <Label Target="achievementSearch" Content="Filter by Goal &amp; Tooltip" />
+                    <TextBox x:Name="achievementSearch" Text="{Binding AchievementSearchText}" />
+                </StackPanel>
+
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Command="{Binding GetAchievementsCommand}" Grid.Column="2">Grab Achievements</Button>
-                <CheckBox IsChecked="{Binding ExcludeGoalsBeyondCharacterLimit}" Grid.Column="3">Exclude goals longer than 60 characters</CheckBox>
+               
+                <CheckBox IsChecked="{Binding ExcludeGoalsBeyondCharacterLimit}" 
+                          Grid.Column="3" VerticalAlignment="Bottom"
+                          ToolTip.Tip="Bingo has a character limit for goal text (60 for the goal, 120 for the tooltip).Normally the app trims goals with text beyond this limit, but enable this option to exclude those goals instead.">
+                    Exclude trimmed goals</CheckBox>
+              
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="OpenAdvancedJsonOptions" Grid.Column="4">Advanced Options</Button>   
+             
                 <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="GenerateJson" Grid.Column="5">Copy JSON to Clipboard</Button>    
             </Grid>
         </Grid>
