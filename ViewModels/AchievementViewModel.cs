@@ -1,4 +1,7 @@
 ﻿using RetroAchievementBingoGenerator.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace RetroAchievementBingoGenerator.ViewModels
 {
@@ -57,6 +60,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public bool PrependGameName = true;
 
+        public string Range { get; set; }
+
         public bool PrependGameNameIfMulti => PrependGameName && _game.PrependToGoals;
         
         public int GetGoalTextLength(bool isMultiGame)
@@ -65,6 +70,22 @@ namespace RetroAchievementBingoGenerator.ViewModels
                 return GoalTextWithGameName.Length;
             else
                 return GoalText.Length;
+        }
+
+        public List<long> GetRangeAsList()
+        {
+            try
+            {
+                if(!GoalText.ToLower().Contains("{{x}}"))
+                    return new List<long>();
+
+                var values = Range.Trim().Split(",").Select(x => long.Parse(x)).ToList();
+                return values.OrderBy(x => x).ToList();
+            }
+            catch(Exception)
+            {
+                return new List<long>(); 
+            }
         }
     }
 }

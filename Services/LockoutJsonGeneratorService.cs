@@ -113,7 +113,7 @@ namespace RetroAchievementBingoGenerator.Services
                 BoardCategories = boardCategories,
                 Progression = progression,
                 Icons = new List<string>(),
-                Range = new List<long>(),
+                Range = achievement.GetRangeAsList(),
                 Weighting = weight,
                 Disabled = !achievement.IsChecked
             };
@@ -123,7 +123,8 @@ namespace RetroAchievementBingoGenerator.Services
 
         private string GetGoal(AchievementViewModel achievement, bool isMultiGame, bool excludeLongGoals)
         {
-            var goal = Regex.Replace(achievement.Title, _validCharactersRegex, "");
+            var goal = Regex.Replace(achievement.GoalText, _validCharactersRegex, "");
+            goal = goal.Replace("{{x}}", "{{X}}");
             goal = isMultiGame && achievement.PrependGameNameIfMulti ? $"{achievement.GameName}: {goal}" : goal;
 
             if (goal.Length > GoalCharacterLimit)
@@ -143,7 +144,7 @@ namespace RetroAchievementBingoGenerator.Services
 
         private string GetTooltip(AchievementViewModel achievement)
         {
-            var tooltip = Regex.Replace(achievement.Description, _validCharactersRegex, "");
+            var tooltip = Regex.Replace(achievement.TooltipText, _validCharactersRegex, "");
             if (tooltip.Length > TooltipCharacterLimit)
             {
                 ToolTipsTrimmed++;

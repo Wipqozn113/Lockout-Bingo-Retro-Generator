@@ -141,6 +141,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
                     new CheckBoxColumn<AchievementViewModel>("Include", x => x.IsChecked, (m, v) => m.IsChecked = v),
                     new TextColumn<AchievementViewModel, string>("Goal", x => x.GoalText, (m, v) => m.GoalText = v ?? string.Empty, null, shortTextColumnOptions),
                     new TextColumn<AchievementViewModel, string>("Length (w/ game)", x => x.GoalTextLenth, null, numberOptions),
+                    new TextColumn<AchievementViewModel, string>("Range", x => x.Range, (m, v) => m.Range = v ?? string.Empty),
                     new TextColumn<AchievementViewModel, string>("Tooltip", x => x.TooltipText, (m, v) => m.TooltipText = v ?? string.Empty, null, longTextColumnOptions),
                     new TextColumn<AchievementViewModel, int>("Length", x => x.TooltipTextLength, null, numberOptions),
                     new TextColumn<AchievementViewModel, string>("Game", x => x.GameName, null, shortTextColumnOptions),
