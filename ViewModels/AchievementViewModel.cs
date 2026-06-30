@@ -72,19 +72,19 @@ namespace RetroAchievementBingoGenerator.ViewModels
                 return GoalText.Length;
         }
 
-        public List<long> GetRangeAsList()
+        public List<int> GetRangeAsList()
         {
             try
             {
                 if(!GoalText.ToLower().Contains("{{x}}"))
-                    return new List<long>();
+                    return new List<int>();
 
-                var values = Range.Trim().Split(",").Select(x => long.Parse(x)).ToList();
+                var values = Range.Trim().Split(",").Select(x => int.Parse(x)).ToList();
                 return values.OrderBy(x => x).ToList();
             }
             catch(Exception)
             {
-                return new List<long>(); 
+                return new List<int>(); 
             }
         }
     }

@@ -12,7 +12,7 @@ namespace RetroAchievementBingoGenerator.Models.Lockout
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("range")]
-        public List<long> Range { get; set; }
+        public List<int> Range { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("board_categories")]
