@@ -53,5 +53,7 @@ namespace RetroAchievementBingoGenerator.ViewModels
 
         public bool PrependToGoals { get; set; } = true;
 
+        public bool UseToolTipsAsGoals { get; set; } = false;
+
     }
 }

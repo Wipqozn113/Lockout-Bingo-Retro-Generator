@@ -123,7 +123,8 @@ namespace RetroAchievementBingoGenerator.Services
 
         private string GetGoal(AchievementViewModel achievement, bool isMultiGame, bool excludeLongGoals)
         {
-            var goal = Regex.Replace(achievement.GoalText, _validCharactersRegex, "");
+            var goal = achievement.UseTooltipAsGoal ? achievement.TooltipText : achievement.GoalText;
+            goal = Regex.Replace(goal, _validCharactersRegex, "");
             goal = goal.Replace("{{x}}", "{{X}}");
             goal = isMultiGame && achievement.PrependGameNameIfMulti ? $"{achievement.GameName}: {goal}" : goal;
 
@@ -144,6 +145,9 @@ namespace RetroAchievementBingoGenerator.Services
 
         private string GetTooltip(AchievementViewModel achievement)
         {
+            if (achievement.UseTooltipAsGoal)
+                return string.Empty;
+
             var tooltip = Regex.Replace(achievement.TooltipText, _validCharactersRegex, "");
             if (tooltip.Length > TooltipCharacterLimit)
             {

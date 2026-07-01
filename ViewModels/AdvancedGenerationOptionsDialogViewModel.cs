@@ -170,7 +170,8 @@ namespace RetroAchievementBingoGenerator.ViewModels
                     new TextColumn<GameViewModel, string>("Name", x => x.DisplayName, (m, v) => m.DisplayName = v ?? string.Empty),
                     new TextColumn<GameViewModel, string>("Console", x => x.ConsoleName),
                     new TextColumn<GameViewModel, int>("Goals", x => x.NumAchievements, null, numberOptions),
-                    new CheckBoxColumn<GameViewModel>("Prepend to Goals", x => x.PrependToGoals, (m, v) => m.PrependToGoals = v)
+                    new CheckBoxColumn<GameViewModel>("Prepend to Goals", x => x.PrependToGoals, (m, v) => m.PrependToGoals = v),
+                    new CheckBoxColumn<GameViewModel>("Use tooltip as Goal", x => x.UseToolTipsAsGoals, (m, v) => m.UseToolTipsAsGoals = v)
                 }
             };
         }

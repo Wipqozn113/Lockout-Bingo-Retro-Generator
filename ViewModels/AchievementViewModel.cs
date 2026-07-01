@@ -63,7 +63,9 @@ namespace RetroAchievementBingoGenerator.ViewModels
         public string Range { get; set; }
 
         public bool PrependGameNameIfMulti => PrependGameName && _game.PrependToGoals;
-        
+
+        public bool UseTooltipAsGoal => _game.UseToolTipsAsGoals;
+
         public int GetGoalTextLength(bool isMultiGame)
         {
             if (isMultiGame)
